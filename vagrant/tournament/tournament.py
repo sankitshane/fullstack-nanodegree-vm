@@ -24,7 +24,6 @@ def deletePlayers():
     conn = connect()
     c = conn.cursor()
     c.execute("DELETE FROM players")
-    c.execute("DELETE FROM results")
     conn.commit()
     conn.close()
 
@@ -50,6 +49,7 @@ def registerPlayer(name):
     conn = connect()
     c = conn.cursor()
     c.execute("INSERT INTO players (Name) VALUES (%s)", name)
+    c.execute("INSERT INTO results (Wins,Matches) VALUES (%s,%S)", 0,0)
     conn.commit()
     conn.close()
 
@@ -83,6 +83,8 @@ def reportMatch(winner, loser):
     conn = connect()
     c = conn.cursor()
     c.execute("UPDATE rounds SET Winner = (%s) , Loser = (%s) WHERE Player1 = (%s) and Player2 = (%s) or Player1 = (%s) and Player2 = (%s)", winner,loser,winner,loser,loser,winner)
+    c.execute("UPDATE results SET Wins = Wins + 1 , Matches = Matches + 1 WHERE Id = (%s)",winner)
+    c.execute("UPDATE results SET Matches = Matches + 1 WHERE Id = (%s)",loser)
     conn.commit()
     conn.close()
 

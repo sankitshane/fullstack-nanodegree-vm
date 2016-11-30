@@ -21,7 +21,6 @@ CREATE TABLE results (
 );
 
 CREATE TABLE rounds (
-      serial_no INT NOT NULL,
       Player1 INT NOT NULL,
       Player2 INT NOT NULL,
       Winner INT NOT NULL,
