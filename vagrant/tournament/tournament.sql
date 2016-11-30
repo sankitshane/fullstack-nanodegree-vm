@@ -7,3 +7,23 @@
 -- these lines here.
 
 
+CREATE DATABASE tournament;
+
+CREATE TABLE players (
+      Id SERIAL PRIMARY KEY NOT NULL,
+      Name VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE results (
+      Id INT references players(Id),
+      Wins INT,
+      Matches INT
+);
+
+CREATE TABLE rounds (
+      serial_no INT NOT NULL,
+      Player1 INT NOT NULL,
+      Player2 INT NOT NULL,
+      Winner INT NOT NULL,
+      Loser INT NOT NULL
+);
