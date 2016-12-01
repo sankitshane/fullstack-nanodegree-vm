@@ -48,8 +48,8 @@ def registerPlayer(name):
     """
     conn = connect()
     c = conn.cursor()
-    c.execute("INSERT INTO players (Name) VALUES (%s)", name)
-    c.execute("INSERT INTO results (Wins,Matches) VALUES (%s,%S)", 0,0)
+    c.execute("INSERT INTO players (Name) VALUES ((%s))", name)
+    c.execute("INSERT INTO results (Id,Wins,Matches) VALUES ((SELECT Id FROM players WHERE Name = (%s)),(%s),(%S))",name,0,0)
     conn.commit()
     conn.close()
 
