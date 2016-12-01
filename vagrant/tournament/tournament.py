@@ -103,3 +103,9 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    conn = connect()
+    c= conn.cursor()
+    c.execute("SELECT * FROM results")
+    player = c.fetchall()
+    conn.close()
+    
