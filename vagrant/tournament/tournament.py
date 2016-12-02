@@ -16,6 +16,7 @@ def deleteMatches():
     conn = connect()
     c = conn.cursor()
     c.execute("DELETE FROM rounds")
+    c.execute("UPDATE results set Matches = 0,Wins = 0")
     conn.commit()
     conn.close()
 
@@ -23,6 +24,7 @@ def deletePlayers():
     """Remove all the player records from the database."""
     conn = connect()
     c = conn.cursor()
+    c.execute("DELETE FROM results")
     c.execute("DELETE FROM players")
     conn.commit()
     conn.close()
@@ -33,9 +35,10 @@ def countPlayers():
     conn = connect()
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM players")
-    count = c.fetchall()
+    count = c.fetchone()
     conn.close()
-    return count
+    res = int(count[0])
+    return res
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -46,10 +49,11 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+
     conn = connect()
     c = conn.cursor()
-    c.execute("INSERT INTO players (Name) VALUES ((%s))", name)
-    c.execute("INSERT INTO results (Id,Wins,Matches) VALUES ((SELECT Id FROM players WHERE Name = (%s)),(%s),(%S))",name,0,0)
+    c.execute("INSERT INTO players (Name) VALUES (%s)" ,(name,))
+    c.execute("INSERT INTO results (Id,Wins,Matches) VALUES ((SELECT Id FROM players WHERE Name = %s),%s,%s)",(name,int(0),int(0),))
     conn.commit()
     conn.close()
 
@@ -69,7 +73,7 @@ def playerStandings():
     conn = connect()
     c = conn.cursor()
     c.execute("SELECT players.ID, players.Name, results.Wins , results.Matches FROM players JOIN results ON players.Id = results.Id ")
-    play = ((str(row[0]),str(row[1]),str(row[2]),str(row[3])) for row in c.fetchall())
+    play = [(str(row[0]),str(row[1]),int(row[2]),int(row[3])) for row in c.fetchall()]
     conn.close()
     return play
 
@@ -82,9 +86,9 @@ def reportMatch(winner, loser):
     """
     conn = connect()
     c = conn.cursor()
-    c.execute("UPDATE rounds SET Winner = (%s) , Loser = (%s) WHERE Player1 = (%s) and Player2 = (%s) or Player1 = (%s) and Player2 = (%s)", winner,loser,winner,loser,loser,winner)
-    c.execute("UPDATE results SET Wins = Wins + 1 , Matches = Matches + 1 WHERE Id = (%s)",winner)
-    c.execute("UPDATE results SET Matches = Matches + 1 WHERE Id = (%s)",loser)
+    c.execute("UPDATE rounds SET Winner = %s ,Loser = %s WHERE Player1 = %s and Player2 = %s or Player1 = %s and Player2 = %s",( winner,loser,winner,loser,loser,winner,))
+    c.execute("UPDATE results SET Wins = Wins + 1 , Matches = Matches + 1 WHERE Id = %s",(winner,))
+    c.execute("UPDATE results SET Matches = Matches + 1 WHERE Id = %s",(loser,))
     conn.commit()
     conn.close()
 
@@ -105,7 +109,11 @@ def swissPairings():
     """
     conn = connect()
     c= conn.cursor()
-    c.execute("SELECT * FROM results")
+    c.execute("SELECT players.Id, players.Name, results.Wins FROM players JOIN results ON players.Id = results.Id ORDER BY results.Wins DESC")
     player = c.fetchall()
     conn.close()
-    
+    res = []
+    for i in xrange(0,len(player),2):
+        res.append((int(player[i][0]),player[i][1],int(player[i+1][0]),player[i+1][1]))
+
+    return res

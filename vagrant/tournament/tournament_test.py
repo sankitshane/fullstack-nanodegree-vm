@@ -118,7 +118,7 @@ def testPairings():
     registerPlayer("Princess Celestia")
     registerPlayer("Princess Luna")
     standings = playerStandings()
-    [id1, id2, id3, id4, id5, id6, id7, id8] = [row[0] for row in standings]
+    [id1, id2, id3, id4, id5, id6, id7, id8] = [int(row[0]) for row in standings]
     pairings = swissPairings()
     if len(pairings) != 4:
         raise ValueError(

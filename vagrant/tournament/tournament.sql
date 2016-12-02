@@ -9,6 +9,8 @@
 
 CREATE DATABASE tournament;
 
+\c tournament;
+
 CREATE TABLE players (
       Id SERIAL PRIMARY KEY NOT NULL,
       Name VARCHAR(20) NOT NULL
