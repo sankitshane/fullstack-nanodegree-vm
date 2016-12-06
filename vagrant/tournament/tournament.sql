@@ -9,6 +9,7 @@
 -- Load the file in vagrant psql ny \i tournament.sql
 
 -- Create a database tournament
+DROP DATABASE IF EXISTS tournament;
 CREATE DATABASE tournament;
 
 -- connect to the database tournament by \c tournament
@@ -16,21 +17,13 @@ CREATE DATABASE tournament;
 
 --Create table players
 CREATE TABLE players (
-      Id SERIAL PRIMARY KEY NOT NULL,
-      Name VARCHAR(20) NOT NULL
+    id SERIAL PRIMARY KEY,
+    name TEXT
 );
 
--- Create table results
-CREATE TABLE results (
-      Id INT references players(Id),
-      Wins INT,
-      Matches INT
-);
-
---Create table rounds
-CREATE TABLE rounds (
-      Player1 INT NOT NULL,
-      Player2 INT NOT NULL,
-      Winner INT NOT NULL,
-      Loser INT NOT NULL
+--Create table matches
+CREATE TABLE matches (
+    id SERIAL PRIMARY KEY,
+    winner INTEGER REFERENCES players(id),
+    loser INTEGER REFERENCES players(id)
 );
